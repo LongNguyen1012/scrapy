@@ -21,7 +21,7 @@ class QuotesSpider(scrapy.Spider):
                 'rating':result.css('span.bbb-rating extra-rating::text').extract_first(),
                 'street':result.css('span.street-address::text').extract_first(),
                 'locality':result.css('span.locality::text').extract_first(),
-                'region"':result.css('span["itemprop="addressRegion"]::text').extract_first(),
+                'region"':result.css('span[itemprop="addressRegion"]::text').extract_first(),
                 'zip':result.css('span[itemprop="postalCode"]::text').extract_first(),
                 'phone':result.css('span[itemprop="telephone"]::text').extract_first(),
                 'tags':result.css('div.categories').extract(),
