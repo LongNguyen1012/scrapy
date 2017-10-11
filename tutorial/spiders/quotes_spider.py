@@ -10,19 +10,22 @@ import scrapy
 
 class QuotesSpider(scrapy.Spider):
     name = "quotes"
-
-    def start_requests(self):
-        urls = [
-            'http://quotes.toscrape.com/page/1/',
-            'http://quotes.toscrape.com/page/2/',
-        ]
-        for url in urls:
-            yield scrapy.Request(url=url, callback=self.parse)
+    
+    allowed_domains = ["https://www.yellowpages.com/los-angeles-ca/attorneys?refinements=bbb_grade_display%3A1"]
+    start_urls = ["https://www.yellowpages.com/los-angeles-ca/attorneys?refinements=bbb_grade_display%3A1"]
 
     def parse(self, response):
-        self.log("This is a log")
-        yield {
-            'author_name':response.css('small.author::text').extract_first(),
-            'text':response.css('span.text::text').extract_first(),
-            'tags':response.css('a.tag::text').extract()
-        }
+        for result in response.css("div.result"):
+            item = {
+                'company_name':result.css('span[itemprop="name"]::text').extract_first(),
+                'rating':result.css('span.bbb-rating extra-rating::text').extract_first(),
+                'street':result.css('span.street-address::text').extract_first(),
+                'locality':result.css('span.locality::text').extract_first(),
+                'region"':result.css('span["itemprop="addressRegion"]::text').extract_first(),
+                'zip':result.css('span[itemprop="postalCode"]::text').extract_first(),
+                'phone':result.css('span[itemprop="telephone"]::text').extract_first(),
+                'tags':result.css('div.categories').extract(),
+                'comment':result.css('p.body with-avatar::text').extract_first()
+            }
+        
+        yield item
